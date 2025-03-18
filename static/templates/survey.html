@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Emissions Survey</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .survey-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .submit-btn:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .results-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Air Emissions Analysis</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/">Dashboard</a></li>
+            <li class="nav-item"><a href="/survey">Emissions Survey</a></li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        <section>
+            <h1 class="section-title">AIR EMISSIONS SURVEY</h1>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Your Climate Change Opinions</h3>
+                </div>
+                
+                <p>We'd like to understand your views on climate change and emissions reduction. Please complete the short survey below.</p>
+                
+                {% if message %}
+                <div class="message {% if 'Thank you' in message %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+                {% endif %}
+                
+                <form class="survey-form" method="POST" action="/survey">
+                    <div class="form-group">
+                        <label for="name">Your Name (String):</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Your Age (Integer):</label>
+                        <input type="number" id="age" name="age" min="1" max="120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="concern_level">Your Concern Level About Climate Change (Float, 1-10):</label>
+                        <input type="number" id="concern_level" name="concern_level" min="1" max="10" step="0.1" required>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="is_recycling" name="is_recycling">
+                        <label for="is_recycling">Do you regularly recycle? (Boolean)</label>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Submit Survey</button>
+                </form>
+            </div>
+            
+            {% if survey_count > 0 %}
+            <div class="card results-summary">
+                <div class="card-header">
+                    <h3>Survey Results Summary</h3>
+                </div>
+                
+                <div class="key-insights">
+                    <h4>Current Survey Statistics:</h4>
+                    <ul>
+                        <li>Total responses: {{ survey_count }}</li>
+                        
+                        <li>Average concern level: {{ avg_concern }} / 10</li>
+                        <li>Number of people who recycle: {{ recycling_count }}</li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+    
+    <script>
+        // Simple JavaScript to enhance the form experience
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validate the form on submit
+            const form = document.querySelector('.survey-form');
+            
+            form.addEventListener('submit', function(event) {
+                const nameInput = document.getElementById('name');
+                const ageInput = document.getElementById('age');
+                const concernInput = document.getElementById('concern_level');
+                
+                let valid = true;
+                
+                // Validate name is not empty
+                if (!nameInput.value.trim()) {
+                    alert('Please enter your name');
+                    valid = false;
+                }
+                
+                // Validate age is a number between 1 and 120
+                const age = parseInt(ageInput.value);
+                if (isNaN(age) || age < 1 || age > 120) {
+                    alert('Please enter a valid age between 1 and 120');
+                    valid = false;
+                }
+                
+                // Validate concern level is a number between 1 and 10
+                const concern = parseFloat(concernInput.value);
+                if (isNaN(concern) || concern < 1 || concern > 10) {
+                    alert('Please enter a valid concern level between 1 and 10');
+                    valid = false;
+                }
+                
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Emissions Data Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Additional styles for statistics section */
+        .statistics-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .statistics-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+        
+        .stat-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .stat-box h5 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .stats-table {
+            width: 100%;
+        }
+        
+        .stats-table td {
+            padding: 3px 0;
+        }
+        
+        .stats-table td:first-child {
+            color: #555;
+            width: 40%;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Air Emissions Analysis</h2>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#overview">Overview</a></li>
+            <li class="nav-item"><a href="#total-emissions">Total Emissions</a></li>
+            <li class="nav-item"><a href="#sector-comparison">Sector Comparison</a></li>
+            <li class="nav-item"><a href="#trend-analysis">Trend Analysis</a></li>
+            <li class="nav-item"><a href="#reduction-targets">Reduction Targets</a></li>
+            <li class="nav-item"><a href="/survey">Emissions Survey</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <section id="overview">
+            <h1 class="section-title">AIR EMISSION DATA ANALYSIS</h1>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Overview</h3>
+                </div>
+                <p>This dashboard presents a comprehensive analysis of air emissions data from 1990 to 2021, with projections and targets for 2030. The visualizations provide insights into emission trends across different sectors, progress towards reduction targets, and comparative analyses.</p>
+                
+                <div class="statistics-container">
+                    <h4>Emissions Statistics:</h4>
+                    <div class="statistics-grid">
+                        <div class="stat-box">
+                            <h5>Total Emissions</h5>
+                            <table class="stats-table">
+                                <tr>
+                                    <td><strong>Mean:</strong></td>
+                                    <td>{{ statistics.total_stats.mean }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Median:</strong></td>
+                                    <td>{{ statistics.total_stats.median }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mode:</strong></td>
+                                    <td>{{ statistics.total_stats.mode }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <h5>Transport</h5>
+                            <table class="stats-table">
+                                <tr>
+                                    <td><strong>Mean:</strong></td>
+                                    <td>{{ statistics.sector_stats['Transport'].mean }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Median:</strong></td>
+                                    <td>{{ statistics.sector_stats['Transport'].median }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mode:</strong></td>
+                                    <td>{{ statistics.sector_stats['Transport'].mode }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <h5>Power Stations</h5>
+                            <table class="stats-table">
+                                <tr>
+                                    <td><strong>Mean:</strong></td>
+                                    <td>{{ statistics.sector_stats['Powerstations'].mean }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Median:</strong></td>
+                                    <td>{{ statistics.sector_stats['Powerstations'].median }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mode:</strong></td>
+                                    <td>{{ statistics.sector_stats['Powerstations'].mode }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-insights">
+                    <h4>Key Insights:</h4>
+                    <ul>
+                        <li>Overall emission trends have shown a general decrease since the 1990s</li>
+                        <li>Transport remains the largest contributor to emissions</li>
+                        <li>Power station emissions have significantly decreased over the time period</li>
+                        <li>Progress is being made toward the 2020 and 2030 reduction targets</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="total-emissions">
+            <h2 class="section-title">Total Emissions Over Time</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Historical Emissions Trend</h3>
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ total_emissions_chart }}" alt="Total Emissions Chart">
+                </div>
+                <div class="key-insights">
+                    <h4>Observations:</h4>
+                    <ul>
+                        <li>Emissions peaked in the early 1990s and have generally decreased since</li>
+                        <li>Notable reductions occurred after 2008, potentially related to policy changes and economic factors</li>
+                        <li>Recent years show a continuing downward trend</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="sector-comparison">
+            <h2 class="section-title">Emission by Sector</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Sector Contribution Comparison</h3>
+                </div>
+                <div class="chart-description">
+                    <p>Select a year to view emissions data for different sectors.</p>
+                </div>
+                <div class="year-selector">
+                    <form method="POST" action="/">
+                        <select name="year" onchange="this.form.submit()">
+                            {% for year in years %}
+                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ sector_comparison_chart }}" alt="Sector Comparison Chart">
+                </div>
+                <div class="key-insights">
+                    <h4>Key Findings:</h4>
+                    <ul>
+                        <li>Transport sector remains the largest contributor to emissions in recent years</li>
+                        <li>Power stations emissions have significantly decreased from 46.37 in 1990 to 8.53 in 2021</li>
+                        <li>Industrial emissions have remained relatively stable between 7-10 units throughout most of the period</li>
+                        <li>Agriculture/forestry/fishing fuel usage decreased from 8.76 in 1990 to 3.4 in 2021</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="trend-analysis">
+            <h2 class="section-title">Emission Trends by Sector</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Sector-Specific Trends</h3>
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ trend_by_sector_chart }}" alt="Trend by Sector Chart">
+                </div>
+                <div class="key-insights">
+                    <h4>Trend Analysis:</h4>
+                    <ul>
+                        <li>Power station emissions have shown the most significant decrease</li>
+                        <li>Transport emissions have remained relatively high despite some reduction</li>
+                        <li>Industrial emissions fluctuated but show an overall decreasing trend</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="reduction-targets">
+            <h2 class="section-title">Reduction Targets Progress</h2>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Progress Towards Emission Targets</h3>
+                </div>
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ reduction_targets_chart }}" alt="Reduction Targets Chart">
+                </div>
+                <div class="key-insights">
+                    <h4>Target Assessment:</h4>
+                    <ul>
+                        <li>Progress towards the 2020 reduction target appears to be on track</li>
+                        <li>The 2030 target represents a significant further reduction</li>
+                        <li>Current trend suggests additional policy measures may be needed to meet the 2030 target</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
