@@ -1,0 +1,1 @@
+Add the recorded video into the videos folder and name the .mp4 file as "Trial".
